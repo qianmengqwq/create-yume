@@ -1,0 +1,2 @@
+createRoot(document.getElementById('root'){{#if (eq @config.language 'typescript')}}!{{/if}}).render({{#or (eq @config.router 'react-router') (eq @config.router 'tanstack-router')}}<RouterProvider router={router} />{{/or}}{{#if (eq @config.router 'none')}}<App />{{/if}})
+

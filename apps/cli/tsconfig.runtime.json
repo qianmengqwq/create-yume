@@ -1,0 +1,13 @@
+{
+  // Node 直跑配置：用于 tsx/ts-node 直接执行 TS 源码时
+  // 与 Node 解析对齐（package.json exports、conditions、node: 协议等）
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // Node 的 ESM 模块与解析（避免与 bundler 解析差异）
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+
+    // 直跑仅类型检查，不产 JS
+    "noEmit": true
+  }
+}

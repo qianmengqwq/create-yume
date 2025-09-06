@@ -1,0 +1,18 @@
+import { createApp } from 'vue'
+import App from './App.vue'
+{{> global/import-root-css }}
+{{#if @config.router}}
+import router from './router'
+{{/if}}
+{{#if @config.stateManagement}}
+import { createPinia } from 'pinia'
+{{/if}}
+
+createApp(App)
+{{#if @config.stateManagement}}
+  .use(createPinia())
+{{/if}}
+{{#if @config.router}}
+  .use(router)
+{{/if}}
+  .mount('#root')

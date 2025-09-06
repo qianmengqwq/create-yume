@@ -1,0 +1,15 @@
+{{> global/import-root-css }}
+import { createRoot } from 'react-dom/client'
+
+{{#if (eq @config.router 'react-router')}}
+import { RouterProvider } from 'react-router-dom'
+import router from './router'
+{{> react/render-root}}
+{{else if (eq @config.router 'tanstack-router')}}
+import { RouterProvider } from '@tanstack/react-router'
+import router from './router'
+{{> react/render-root}}
+{{else}}
+import App from './pages/app'
+{{> react/render-root}}
+{{/if}}
