@@ -17,6 +17,15 @@ export class FileIOError extends Data.TaggedError('FileIOError')<{
   targetDir?: string
 }> {}
 
+export class CommandError extends Data.TaggedError('CommandError')<{
+  command: string
+  args: string[]
+  // 暂时用不上，扩展时可能还需要改
+  env?: Record<string, string>
+  cwd?: string
+  shell?: boolean
+}> {}
+
 export class UnknownError extends Data.TaggedError('UnknownError') {
   constructor() {
     super()

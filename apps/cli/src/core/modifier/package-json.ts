@@ -23,8 +23,12 @@ export function buildPackageJson(dsl: ComposeDSL, config: ProjectConfig) {
   const entry = dsl.json('package.json')
     .base(() => basePackageJson(config))
     .modify(when(config.language === 'typescript', devDeps({ typescript: '^5.9.2' })))
-    .modify(when(config.linting === 'antfu-eslint', devDeps({ '@antfu/eslint-config': '^5.2.1', 'eslint': '^9.34.0' })))
+    // 暂时锁一段时间版本，等 issue 解掉
+    .modify(when(config.linting === 'antfu-eslint', devDeps({ '@antfu/eslint-config': '5.2.2', 'eslint': '^9.34.0' })))
     .modify(when(config.linting === 'antfu-eslint', scripts({ 'lint': 'eslint', 'lint:fix': 'eslint --fix' })))
+    .modify(when(config.codeQuality.length > 0, devDeps({ husky: '^9.1.7' })))
+    .modify(when(config.codeQuality.includes('lint-staged'), devDeps({ 'lint-staged': '^16.1.6' })))
+    .modify(when(config.codeQuality.includes('commitlint'), devDeps({ '@commitlint/cli': '^19.8.1', '@commitlint/config-conventional': '^19.8.1' })))
 
   if (isFrontendProject(config)) {
     entry
@@ -48,6 +52,7 @@ export function buildPackageJson(dsl: ComposeDSL, config: ProjectConfig) {
       entry
         .modify(deps({ 'react': '^19.1.1', 'react-dom': '^19.1.1' }))
         .modify(when(config.buildTool === 'vite', deps({ '@vitejs/plugin-react': '^5.0.2' })))
+        .modify(when(config.linting === 'antfu-eslint', devDeps({ '@eslint-react/eslint-plugin': '^1.53.0', 'eslint-plugin-react-hooks': '^5.2.0', 'eslint-plugin-react-refresh': '^0.4.20' })))
         .modify(when(config.router === 'react-router', deps({ 'react-router': '^7.8.2', 'react-router-dom': '^7.8.2' })))
         .modify(when(config.router === 'tanstack-router', deps({ '@tanstack/react-router': '^1.131.35' })))
         .modify(when(config.language === 'typescript', devDeps({ '@types/react': '^19.1.12', '@types/react-dom': '^19.1.9' })))

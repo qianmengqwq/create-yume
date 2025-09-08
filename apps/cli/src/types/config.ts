@@ -17,12 +17,14 @@ export type Preset = 'react-app' | 'vue-app'
 
 export type Language = 'typescript' | 'javascript'
 export type Linting = 'antfu-eslint' | 'none'
+export type CodeQuality = 'lint-staged' | 'commitlint'
 
 export interface BaseProjectConfig {
   readonly name: string
   readonly language: Language
   readonly git: boolean
   readonly linting: Linting
+  readonly codeQuality: CodeQuality[]
 }
 
 export interface BaseFrontendAppConfig extends BaseProjectConfig {

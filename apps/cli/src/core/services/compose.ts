@@ -1,11 +1,15 @@
+import type { StandardCommand } from '@effect/platform/Command'
 import type { ProjectConfig } from '@/types/config'
 import type { ComposeDSL } from '@/types/dsl'
 import type { TemplateRegistry } from '@/types/template'
 import path from 'node:path'
+import process from 'node:process'
 import { Effect } from 'effect'
 import { isReactProject, isVueProject } from '@/utils/type-guard'
+import { buildCommands } from '../commands'
 import { ReactTemplates } from '../template-registry/react'
 import { VueTemplates } from '../template-registry/vue'
+import { CommandService } from './command'
 import { OrchestratorService } from './orchestrator'
 
 // 纯函数：直接把符合条件的模板注册到 DSL（不依赖环境）
@@ -45,8 +49,35 @@ export function generateProject(projectConfig: ProjectConfig) {
   })
 }
 
-export function finishProject() {
+export function executeAllCommands(commands: StandardCommand[]) {
   return Effect.gen(function* () {
+    const commandSvc = yield* CommandService
+    for (const command of commands)
+      yield* commandSvc.execute(command)
+  })
+}
+
+// 在指定目录下执行所有命令（临时 chdir，执行完恢复）
+export function executeAllCommandsInDir(commands: StandardCommand[], dir: string) {
+  return Effect.gen(function* () {
+    const commandSvc = yield* CommandService
+    const previousCwd = process.cwd()
+    yield* Effect.try(() => process.chdir(dir))
+    try {
+      for (const command of commands)
+        yield* commandSvc.execute(command)
+    }
+    finally {
+      process.chdir(previousCwd)
+    }
+  })
+}
+
+export function finishProject(config: ProjectConfig) {
+  return Effect.gen(function* () {
+    const commands = yield* buildCommands(config)
+    const targetDir = `./${config.name}`
+    yield* executeAllCommandsInDir(commands, targetDir)
     yield* Effect.logInfo('🎉 Project generated successfully!')
   })
 }

@@ -1,8 +1,9 @@
 // 编排整个阶段
 
+import type { CommandExecutor } from '@effect/platform/CommandExecutor'
 import type { ProjectConfig } from '@/types/config'
 import type { ComposeDSL } from '@/types/dsl'
-import type { FileIOError, TemplateError } from '@/types/error'
+import type { CommandError, FileIOError, TemplateError } from '@/types/error'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { Context, Effect, Layer } from 'effect'
@@ -17,7 +18,7 @@ interface OrchestratorService {
   readonly execute: (
     baseDir: string,
     config: ProjectConfig,
-  ) => Effect.Effect<void, FileIOError | TemplateError>
+  ) => Effect.Effect<void, FileIOError | TemplateError | CommandError, CommandExecutor>
 }
 
 class OrchestratorTag extends Context.Tag('Orchestrator')<OrchestratorTag, OrchestratorService>() {}

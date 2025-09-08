@@ -1,9 +1,11 @@
-import type { ReactProjectConfig, VueProjectConfig } from '@/types/config'
+import type { CodeQuality, ReactProjectConfig, VueProjectConfig } from '@/types/config'
 import { Effect } from 'effect'
+import { isNone } from '@/utils/none'
 import { FsService } from '~/fs'
 import { ask } from '../adapters/prompts'
 import { askProjectName } from '../questions/common/project-name'
 import { askRemoveExisting } from '../questions/common/remove-existing'
+import { askCodeQuality } from './common/code-quality'
 import { askGit } from './common/git'
 import { askLanguage } from './common/language'
 import { askLinting } from './common/linting'
@@ -45,7 +47,11 @@ const askBaseCommon = Effect.gen(function* () {
   const language = yield* ask(askLanguage)
   const git = yield* ask(askGit)
   const linting = yield* ask(askLinting)
-  return { name, language, git, linting }
+  let codeQuality: CodeQuality[] = []
+  if (git && !isNone(linting)) {
+    codeQuality = yield* ask(askCodeQuality)
+  }
+  return { name, language, git, linting, codeQuality }
 })
 
 const askFrontendCommon = Effect.gen(function* () {
@@ -101,6 +107,7 @@ const createPreset = Effect.gen(function* () {
         language: 'typescript',
         git: true,
         linting: 'antfu-eslint',
+        codeQuality: ['lint-staged', 'commitlint'],
         buildTool: 'vite',
         router: 'react-router',
         stateManagement: 'jotai',
@@ -116,6 +123,7 @@ const createPreset = Effect.gen(function* () {
         language: 'typescript',
         git: true,
         linting: 'antfu-eslint',
+        codeQuality: ['lint-staged', 'commitlint'],
         buildTool: 'vite',
         router: true,
         stateManagement: true,
