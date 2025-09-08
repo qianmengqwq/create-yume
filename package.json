@@ -16,7 +16,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^5.2.1",
+    "@antfu/eslint-config": "5.2.2",
     "@biomejs/biome": "^2.0.6",
     "@changesets/cli": "^2.29.5",
     "@commitlint/cli": "^19.8.1",
